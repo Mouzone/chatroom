@@ -36,3 +36,8 @@ body {
 .username {
     font-weight: bold;
 }
+
+#input {
+    display: flex;
+    flex-direction: column;
+}
