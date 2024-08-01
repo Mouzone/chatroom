@@ -1,11 +1,3 @@
-const submit_button = document.querySelector("button")
-submit_button.addEventListener("click", event => {
-    const message_text = document.getElementById("message").value
-    const username = document.getElementById("username").value
-    sendToServer(username, message_text)
-})
-
-
 function getCurrentTime() {
     const options = {
         year: 'numeric', month: 'long', day: 'numeric',
@@ -68,7 +60,6 @@ function readBlobAsJson(blob) {
 
 // Create a new WebSocket connection
 const socket = new WebSocket('ws://localhost:8080');
-
 socket.onmessage = async (event) => {
     if (event.data instanceof Blob) {
         try {
@@ -82,3 +73,23 @@ socket.onmessage = async (event) => {
         console.log('Received non-Blob data:', event.data);
     }
 };
+
+const submit_button = document.querySelector("button")
+submit_button.addEventListener("click", event => {
+    const message_text = document.getElementById("message").value
+    let username = local_username
+    if (!username) {
+        username = document.getElementById("username").value
+        const username_element = document.getElementById("username")
+        username_element.placeholder = username
+        username_element.setAttribute("disabled", "disabled")
+    }
+    sendToServer(username, message_text)
+})
+let local_username = ""
+if (localStorage.getItem("local_username")) {
+    local_username = localStorage.getItem("local_username")
+}
+
+// todo: using localstorage check for username, if yes change placeholder text to username and disable
+// -- else do not disable and parse username and cheange local storage
