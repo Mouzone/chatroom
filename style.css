@@ -1,0 +1,52 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: content-box;
+    font-size: 15px;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#past-messages {
+    height: 80vh;
+    width: 400px;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.past-message {
+    width: 100%;
+    height: auto;
+    display: flex;
+}
+
+.bubble {
+    width: 40%;
+    padding: 10px;
+    border-radius: 7px;
+    text-align: center;
+}
+
+.yours .bubble {
+    background-color: deepskyblue;
+}
+
+.others .bubble {
+    background-color: slategrey;
+}
+.yours {
+    justify-content: right;
+}
+
+.others {
+    justify-content: left;
+}
