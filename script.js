@@ -77,19 +77,19 @@ socket.onmessage = async (event) => {
 const submit_button = document.querySelector("button")
 submit_button.addEventListener("click", event => {
     const message_text = document.getElementById("message").value
-    let username = local_username
-    if (!username) {
-        username = document.getElementById("username").value
+    if (!local_username) {
+        local_username = document.getElementById("username").value
         const username_element = document.getElementById("username")
-        username_element.placeholder = username
+        username_element.placeholder = local_username
         username_element.setAttribute("disabled", "disabled")
+        localStorage.setItem("local_username", local_username)
     }
-    sendToServer(username, message_text)
+    sendToServer(local_username, message_text)
 })
 let local_username = ""
 if (localStorage.getItem("local_username")) {
     local_username = localStorage.getItem("local_username")
+    const username_element = document.getElementById("username")
+    username_element.placeholder = local_username
+    username_element.setAttribute("disabled", "disabled")
 }
-
-// todo: using localstorage check for username, if yes change placeholder text to username and disable
-// -- else do not disable and parse username and cheange local storage

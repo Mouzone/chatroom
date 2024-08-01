@@ -6,11 +6,11 @@ server.on('connection', (socket) => {
     console.log("A new client connected")
 
     socket.on('message', (message) => {
-        try {
-            socket.send(message)
-        } catch(error) {
-            console.error('Invalid JSON received:', message)
-        }
+        server.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(message)
+            }
+        })
     })
 
     socket.on('close', () => {
@@ -19,5 +19,7 @@ server.on('connection', (socket) => {
 
     socket.send('Welcome to the WebSocket Server')
 })
+
+
 
 console.log('WebSocket server is listening on ws://localhost:8080')
