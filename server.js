@@ -6,9 +6,11 @@ server.on('connection', (socket) => {
     console.log("A new client connected")
 
     socket.on('message', (message) => {
-        console.log(`Recieved: ${message}`)
-
-        socket.send(`You said: ${message}`)
+        try {
+            socket.send(message)
+        } catch(error) {
+            console.error('Invalid JSON received:', message)
+        }
     })
 
     socket.on('close', () => {
