@@ -22,7 +22,8 @@ body {
     border: 1px solid black;
     border-radius: 20px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
+    overflow-y: auto;
 }
 
 .past-message {
@@ -30,6 +31,7 @@ body {
     display: flex;
     gap: 5px;
     border: 1px solid black;
+    justify-self: flex-end;
 }
 
 .username {
