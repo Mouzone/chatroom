@@ -87,7 +87,6 @@ input.addEventListener("submit", event => {
     message_element.value = ""
     if (!local_username) {
         const username_input = document.getElementById("username").value
-        // todo: do not submit if username_input is empty
         local_username = username_input
         setUsernameElement()
         localStorage.setItem("local_username", local_username)
