@@ -17,9 +17,6 @@ server.on('connection', (socket) => {
         console.log('Client disconnected')
     })
 
-    socket.send('Welcome to the WebSocket Server')
 })
-
-
 
 console.log('WebSocket server is listening on ws://localhost:8080')

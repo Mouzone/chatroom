@@ -58,6 +58,12 @@ function readBlobAsJson(blob) {
     });
 }
 
+function setUsernameElement() {
+    const username_element = document.getElementById("username")
+    username_element.placeholder = local_username
+    username_element.setAttribute("disabled", "disabled")
+}
+
 // Create a new WebSocket connection
 const socket = new WebSocket('ws://localhost:8080');
 socket.onmessage = async (event) => {
@@ -65,7 +71,6 @@ socket.onmessage = async (event) => {
         try {
             const jsonObject = await readBlobAsJson(event.data);
             updateMessages(jsonObject)
-            console.log('Parsed JSON object:', jsonObject);
         } catch (error) {
             console.error('Error handling Blob:', error);
         }
@@ -74,22 +79,22 @@ socket.onmessage = async (event) => {
     }
 };
 
-const submit_button = document.querySelector("button")
-submit_button.addEventListener("click", event => {
-    const message_text = document.getElementById("message").value
+const input = document.querySelector("form")
+input.addEventListener("submit", event => {
+    event.preventDefault()
+    const message_element = document.getElementById("message")
+    const message_text = message_element.value
+    message_element.value = ""
     if (!local_username) {
         local_username = document.getElementById("username").value
-        const username_element = document.getElementById("username")
-        username_element.placeholder = local_username
-        username_element.setAttribute("disabled", "disabled")
+        setUsernameElement()
         localStorage.setItem("local_username", local_username)
     }
     sendToServer(local_username, message_text)
 })
+
 let local_username = ""
 if (localStorage.getItem("local_username")) {
     local_username = localStorage.getItem("local_username")
-    const username_element = document.getElementById("username")
-    username_element.placeholder = local_username
-    username_element.setAttribute("disabled", "disabled")
+    setUsernameElement()
 }
