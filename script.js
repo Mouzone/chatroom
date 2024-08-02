@@ -29,6 +29,7 @@ function updateMessages(message_info) {
 function sendToServer(username, message_text) {
     const date_time = getCurrentTime()
     const message_info =  {
+        client_id: client_id,
         type: "message",
         username: username,
         text: message_text,
@@ -71,6 +72,7 @@ join_room_button.addEventListener("click", event => {
     room_password = document.querySelector("input#password").value
     socket.send(
         {
+            client_id: client_id,
             type: "room",
             action: "join",
             name: room_name,
@@ -85,6 +87,7 @@ create_room_button.addEventListener("click", event => {
     room_password = document.querySelector("input#password").value
     socket.send(
         {
+            client_id: client_id,
             type: "room",
             action: "create",
             name: room_name,
@@ -97,6 +100,7 @@ const leave_room_button = document.getElementById("leave-room")
 leave_room_button.addEventListener("click", event => {
     socket.send(
         {
+            client_id: client_id,
             type: "room",
             action: "leave"
         }
@@ -104,19 +108,20 @@ leave_room_button.addEventListener("click", event => {
 })
 
 // Create a new WebSocket connection
-const socket = new WebSocket('ws://localhost:8080');
+// todo: parse clientid on connection and save it as global variable
+const socket = new WebSocket('ws://localhost:8080')
 socket.onmessage = async (event) => {
     if (event.data instanceof Blob) {
         try {
             // todo: on recieving message, if room joined, created, left, update current room name
             // -- for both html and global vars
-            const jsonObject = await readBlobAsJson(event.data);
+            const jsonObject = await readBlobAsJson(event.data)
             updateMessages(jsonObject)
         } catch (error) {
-            console.error('Error handling Blob:', error);
+            console.error('Error handling Blob:', error)
         }
     } else {
-        console.log('Received non-Blob data:', event.data);
+        console.log('Received non-Blob data:', event.data)
     }
 };
 
