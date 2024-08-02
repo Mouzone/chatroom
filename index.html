@@ -8,20 +8,38 @@
     <body>
 <!--    todo: add datetime for each message later-->
         <div id="past-messages">
-            
+
         </div>
-        <form>
-            <section>
-                <label for="username"></label>
-                <input type="text" id="username" placeholder="Username" required>
-            </section>
-            <section>
-                <label for="message"> </label>
-                <input type="text" id="message" placeholder="Message..." required>
-                <button type="submit"> Send </button>
-            </section>
-        </form>
-        <button id="reset-username"> Reset </button>
-        <script src="script.js"></script>
+        <div id="inputs">
+            <form id="room">
+                <section>
+                    <label for="room-name"></label>
+                    <input type="text" id="room-name" placeholder="Room" required>
+                </section>
+                <section>
+                    <label for="password"></label>
+                    <input type="password" id="password" placeholder="Password" required>
+                </section>
+            </form>
+            <div id="button-container">
+                <button id="create-room"> Create </button>
+                <button id="leave-room"> Leave </button>
+                <button id="join-room"> Join </button>
+            </div>
+
+            <form id="message">
+                <section>
+                    <label for="username"></label>
+                    <input type="text" id="username" placeholder="Username" required>
+                </section>
+                <section>
+                    <label for="text"> </label>
+                    <input type="text" id="text" placeholder="Message..." required>
+                    <button type="submit"> Send </button>
+                </section>
+            </form>
+            <button id="reset-username"> Reset </button>
+            <script src="./script.js"></script>
+        </div>
     </body>
 </html>

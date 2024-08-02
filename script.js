@@ -23,7 +23,7 @@ function updateMessages(message_info) {
     past_message.appendChild(username)
     past_message.appendChild(text)
 
-    past_messages.appendChild(past_message)
+    past_messages.prepend(past_message)
 }
 
 function sendToServer(username, message_text) {
@@ -79,15 +79,14 @@ socket.onmessage = async (event) => {
     }
 };
 
-const input = document.querySelector("form")
-input.addEventListener("submit", event => {
+const input_message = document.querySelector("form#message")
+input_message.addEventListener("submit", event => {
     event.preventDefault()
-    const message_element = document.getElementById("message")
+    const message_element = document.getElementById("text")
     const message_text = message_element.value
     message_element.value = ""
     if (!local_username) {
-        const username_input = document.getElementById("username").value
-        local_username = username_input
+        local_username = document.getElementById("username").value
         setUsernameElement()
         localStorage.setItem("local_username", local_username)
     }
