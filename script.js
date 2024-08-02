@@ -60,8 +60,8 @@ function readBlobAsJson(blob) {
 
 function setUsernameElement() {
     const username_element = document.getElementById("username")
-    username_element.placeholder = local_username
-    username_element.setAttribute("disabled", "disabled")
+    username_element.value = local_username
+    username_element.disabled = true
 }
 
 // Create a new WebSocket connection
@@ -86,11 +86,22 @@ input.addEventListener("submit", event => {
     const message_text = message_element.value
     message_element.value = ""
     if (!local_username) {
-        local_username = document.getElementById("username").value
+        const username_input = document.getElementById("username").value
+        // todo: do not submit if username_input is empty
+        local_username = username_input
         setUsernameElement()
         localStorage.setItem("local_username", local_username)
     }
     sendToServer(local_username, message_text)
+})
+
+const reset_username_button = document.querySelector("button#reset-username")
+reset_username_button.addEventListener("click", event => {
+    local_username = ""
+    localStorage.removeItem("local_username")
+    const username_element = document.getElementById("username")
+    username_element.disabled = false
+    username_element.value = ""
 })
 
 let local_username = ""
