@@ -29,6 +29,7 @@ function updateMessages(message_info) {
 function sendToServer(username, message_text) {
     const date_time = getCurrentTime()
     const message_info =  {
+        type: "message",
         username: username,
         text: message_text,
         date_time: date_time
@@ -64,11 +65,51 @@ function setUsernameElement() {
     username_element.disabled = true
 }
 
+const join_room_button = document.getElementById("join-room")
+join_room_button.addEventListener("click", event => {
+    room_name = document.querySelector("input#room-name").value
+    room_password = document.querySelector("input#password").value
+    socket.send(
+        {
+            type: "room",
+            action: "join",
+            name: room_name,
+            password: room_password
+        }
+    )
+})
+
+const create_room_button = document.getElementById("create-room")
+create_room_button.addEventListener("click", event => {
+    room_name = document.querySelector("input#room-name").value
+    room_password = document.querySelector("input#password").value
+    socket.send(
+        {
+            type: "room",
+            action: "create",
+            name: room_name,
+            password: room_password
+        }
+    )
+})
+
+const leave_room_button = document.getElementById("leave-room")
+leave_room_button.addEventListener("click", event => {
+    socket.send(
+        {
+            type: "room",
+            action: "leave"
+        }
+    )
+})
+
 // Create a new WebSocket connection
 const socket = new WebSocket('ws://localhost:8080');
 socket.onmessage = async (event) => {
     if (event.data instanceof Blob) {
         try {
+            // todo: on recieving message, if room joined, created, left, update current room name
+            // -- for both html and global vars
             const jsonObject = await readBlobAsJson(event.data);
             updateMessages(jsonObject)
         } catch (error) {
@@ -90,6 +131,7 @@ input_message.addEventListener("submit", event => {
         setUsernameElement()
         localStorage.setItem("local_username", local_username)
     }
+    // todo: highlight room if not joined yet
     sendToServer(local_username, message_text)
 })
 
@@ -102,6 +144,8 @@ reset_username_button.addEventListener("click", event => {
     username_element.value = ""
 })
 
+let room_name = ""
+let room_password = ""
 let local_username = ""
 if (localStorage.getItem("local_username")) {
     local_username = localStorage.getItem("local_username")
