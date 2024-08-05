@@ -9,14 +9,11 @@
 }
 
 body {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-#inputs {
+    width: 100vw;
+    height: 100vh;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 20px;
 }
 
@@ -39,17 +36,9 @@ body {
     justify-self: flex-end;
 }
 
-.username {
-    font-weight: bold;
-}
-
-#input {
-    display: flex;
-    flex-direction: column;
-}
 
 form {
     display:flex;
-    flex-direction: column;
+    justify-content: center;
 }
 
