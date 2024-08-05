@@ -1,13 +1,21 @@
-function updateMessages(message) {
+function updateMessages(data) {
+    const username = data["username"]
+    const message = data["message"]
+
     const past_messages = document.getElementById("past-messages")
     const past_message = document.createElement("div")
     past_message.classList.add("past-message")
 
-    const text = document.createElement("span")
-    text.classList.add("text")
-    text.textContent = message
+    const message_element = document.createElement("span")
+    message_element.classList.add("message")
+    message_element.textContent = message
 
-    past_message.appendChild(text)
+    const username_element = document.createElement("span")
+    username_element.classList.add("username")
+    username_element.textContent = `${username}:`
+
+    past_message.appendChild(username_element)
+    past_message.appendChild(message_element)
 
     past_messages.prepend(past_message)
 }
@@ -29,7 +37,7 @@ socket.onmessage = async event => {
         if (data["action"] === "client_id") {
             client_id = data["client_id"]
         } else if (data["action"] === "receive") {
-            updateMessages(data["message"])
+            updateMessages(data)
         }
     } catch (error) {
         console.error('Error handling JSON:', error)
@@ -50,7 +58,6 @@ input_message.addEventListener("submit", event => {
 
     const message_element = document.getElementById("text")
     const message = message_element.value
-    updateMessages(message)
     sendToServer(message)
 
     message_element.value = ""
