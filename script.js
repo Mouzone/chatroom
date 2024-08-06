@@ -38,6 +38,7 @@ function sendRoom(room_name) {
     socket.send(JSON.stringify(message_info))
 }
 
+// todo: write logic when recieving success on joining room and setting and disabling room
 const socket = new WebSocket('ws://localhost:8080')
 socket.onmessage = async event => {
     try {

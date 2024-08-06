@@ -37,18 +37,20 @@ server.on('connection', socket => {
                 }
             })
         } else if (data["action"] === "join") {
+            // todo: remove self from all other rooms
             clients_rooms[data["client_id"]] = data["room_name"]
-            if (!data["room_name"] in rooms_clients) {
-                data["room_name"] = new Set()
+            if (!(data["room_name"] in rooms_clients)) {
+                rooms_clients["room_name"] = new Set()
             }
-            clients_rooms[data["client_id"]].add(data["client_id"])
+            rooms_clients[data["client_id"]].add(data["client_id"])
+            // todo: send success message at end
         } else if (data["type"] === "disconnect") {
             delete clients_sockets[data["client_id"]]
             delete clients_usernames[data["client_id"]]
             delete clients_rooms["client_id"]
 
             const room_to_clear = clients_rooms["client_id"]
-            rooms_clients[room_to_clear].remove(data["client_id"])
+            rooms_clients[room_to_clear].delete(data["client_id"])
             if (rooms_clients[room_to_clear].length === 0) {
                 delete rooms_clients[room_to_clear]
             }
