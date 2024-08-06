@@ -1,3 +1,21 @@
+function sendMessage(message_text) {
+    const message_info =  {
+        client_id: client_id,
+        action: "send",
+        message: message_text
+    }
+    socket.send(JSON.stringify(message_info))
+}
+
+function sendRoom() {
+    const message_info = {
+        client_id: client_id,
+        action: "join",
+        room_name: room_name
+    }
+    socket.send(JSON.stringify(message_info))
+}
+
 function updateMessages(data) {
     const username = data["username"]
     const message = data["message"]
@@ -20,25 +38,12 @@ function updateMessages(data) {
     past_messages.prepend(past_message)
 }
 
-function sendMessage(message_text) {
-    const message_info =  {
-        client_id: client_id,
-        action: "send",
-        message: message_text
-    }
-    socket.send(JSON.stringify(message_info))
+function updateRoom() {
+    const room_name_element = document.getElementById("room-name")
+    room_name_element.disabled = true
+    room_name.value = room_name
 }
 
-function sendRoom(room_name) {
-    const message_info = {
-        client_id: client_id,
-        action: "join",
-        room_name: room_name
-    }
-    socket.send(JSON.stringify(message_info))
-}
-
-// todo: write logic when recieving success on joining room and setting and disabling room
 const socket = new WebSocket('ws://localhost:8080')
 socket.onmessage = async event => {
     try {
@@ -47,6 +52,10 @@ socket.onmessage = async event => {
             client_id = data["client_id"]
         } else if (data["action"] === "receive") {
             updateMessages(data)
+        } else if (data["action"] === "notify") {
+            if (data["action_type"] === "join") {
+                updateRoom()
+            }
         }
     } catch (error) {
         console.error('Error handling JSON:', error)
@@ -61,15 +70,21 @@ socket.onclose = async event => {
     socket.send(JSON.stringify(close_message))
 }
 
-const room_to_join = document.querySelector("form#room")
-room_to_join.addEventListener("submit", event => {
-    event.preventDefault()
-
+const join_room = document.querySelector("#join-room")
+join_room.addEventListener("click", event => {
     const room_name_element = document.getElementById("room-name")
-    const room_name = room_name_element.value
-    sendRoom(room_name)
+    room_name = room_name_element.value
+    sendRoom()
 
     room_name_element.value = ""
+})
+
+const leave_room = document.querySelector("#leave-room")
+leave_room.addEventListener("click", event => {
+    const room_name_element = document.getElementById("room-name")
+    room_name_element.disabled = false
+    room_name_element.value = ""
+    room_name = ""
 })
 
 const input_message = document.querySelector("form#message")
@@ -83,5 +98,9 @@ input_message.addEventListener("submit", event => {
     message_element.value = ""
 })
 
-
 let client_id = ""
+let room_name = ""
+
+// todo: show in a room
+// todo: error when submitting message but no room
+// todo: popup upon leaving room

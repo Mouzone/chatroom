@@ -42,3 +42,6 @@ form {
     display:flex;
 }
 
+#room-container {
+    display: flex;
+}

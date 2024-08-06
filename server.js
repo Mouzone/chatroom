@@ -23,36 +23,34 @@ server.on('connection', socket => {
 
     socket.on('message', message => {
         const data = JSON.parse(message)
+        console.log(data)
         if (data["action"] === "send") {
             const room_to_send = clients_rooms[data["client_id"]]
             const clients_to_receive = rooms_clients[room_to_send]
             clients_to_receive.forEach(client => {
-                if (client !== data["client_id"]) {
-                    clients_sockets[client].send(JSON.stringify(
-                        {
-                            action: "receive",
-                            username: clients_usernames[data["client_id"]],
-                            message: data["message"]
-                        }))
-                }
+                clients_sockets[client].send(JSON.stringify(
+                    {
+                        action: "receive",
+                        username: clients_usernames[data["client_id"]],
+                        message: data["message"]
+                    }))
             })
         } else if (data["action"] === "join") {
-            // remove from past room
             if (data["client_id"] in clients_rooms) {
-                rooms_clients[data["client_id"]].remove(data["client_id"])
+                rooms_clients[clients_rooms[data["client_id"]]].delete(data["client_id"])
             }
             // add to new room
             clients_rooms[data["client_id"]] = data["room_name"]
             if (!(data["room_name"] in rooms_clients)) {
-                rooms_clients["room_name"] = new Set()
+                rooms_clients[data["room_name"]] = new Set()
             }
             rooms_clients[data["room_name"]].add(data["client_id"])
         } else if (data["type"] === "disconnect") {
             delete clients_sockets[data["client_id"]]
             delete clients_usernames[data["client_id"]]
-            delete clients_rooms["client_id"]
+            delete clients_rooms[data["client_id"]]
 
-            const room_to_clear = clients_rooms["client_id"]
+            const room_to_clear = clients_rooms[data["client_id"]]
             rooms_clients[room_to_clear].delete(data["client_id"])
             if (rooms_clients[room_to_clear].length === 0) {
                 delete rooms_clients[room_to_clear]
@@ -68,5 +66,5 @@ server.on('connection', socket => {
         ))
     })
 })
-
+// maybe rewrite to send message saying recieve, then send message upon completion of task
 console.log('WebSocket server is listening on ws://localhost:8080')
