@@ -20,7 +20,7 @@ function updateMessages(data) {
     past_messages.prepend(past_message)
 }
 
-function sendToServer(message_text) {
+function sendMessage(message_text) {
     const message_info =  {
         client_id: client_id,
         action: "send",
@@ -29,8 +29,16 @@ function sendToServer(message_text) {
     socket.send(JSON.stringify(message_info))
 }
 
-const socket = new WebSocket('ws://localhost:8080')
+function sendRoom(room_name) {
+    const message_info = {
+        client_id: client_id,
+        action: "join",
+        room_name: room_name
+    }
+    socket.send(JSON.stringify(message_info))
+}
 
+const socket = new WebSocket('ws://localhost:8080')
 socket.onmessage = async event => {
     try {
         const data = await JSON.parse(event.data)
@@ -52,15 +60,27 @@ socket.onclose = async event => {
     socket.send(JSON.stringify(close_message))
 }
 
+const room_to_join = document.querySelector("form#room")
+room_to_join.addEventListener("submit", event => {
+    event.preventDefault()
+
+    const room_name_element = document.getElementById("room-name")
+    const room_name = room_name_element.value
+    sendRoom(room_name)
+
+    room_name_element.value = ""
+})
+
 const input_message = document.querySelector("form#message")
 input_message.addEventListener("submit", event => {
     event.preventDefault()
 
     const message_element = document.getElementById("text")
     const message = message_element.value
-    sendToServer(message)
+    sendMessage(message)
 
     message_element.value = ""
 })
+
 
 let client_id = ""
