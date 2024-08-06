@@ -38,6 +38,9 @@ server.on('connection', socket => {
         } else if (data["action"] === "join") {
             if (data["client_id"] in clients_rooms) {
                 rooms_clients[clients_rooms[data["client_id"]]].delete(data["client_id"])
+                if (rooms_clients[clients_rooms[data["client_id"]]].length === 0) {
+                    delete rooms_clients[data["room_name"]]
+                }
             }
             // add to new room
             clients_rooms[data["client_id"]] = data["room_name"]
@@ -45,6 +48,13 @@ server.on('connection', socket => {
                 rooms_clients[data["room_name"]] = new Set()
             }
             rooms_clients[data["room_name"]].add(data["client_id"])
+        } else if (data["action"] === "leave") {
+            rooms_clients[data["room_name"]].delete(data["client_id"])
+            if (rooms_clients[data["room_name"]].length === 0) {
+                delete rooms_clients[data["room_name"]]
+            }
+            delete clients_rooms[data["client_id"]]
+
         } else if (data["type"] === "disconnect") {
             delete clients_sockets[data["client_id"]]
             delete clients_usernames[data["client_id"]]
