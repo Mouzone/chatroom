@@ -49,6 +49,10 @@ function updateMessages(data) {
 }
 
 function joinRoom() {
+    room_error.textContent = ""
+    room_error.classList.remove("error")
+    room_error.classList.remove("active")
+    
     join_room.disabled = true
     leave_room.disabled = false
     room_name_element.disabled = true
@@ -103,16 +107,25 @@ input_room.addEventListener("submit", event => {
 
 const leave_room = document.querySelector("#leave-room")
 leave_room.addEventListener("click", event => {
+    // todo: popup upon leaving room (to confirm), if confirm then sendLeave()
+
     sendLeave()
 })
 
 const input_message = document.querySelector("form#message")
 const message_element = document.getElementById("text")
+const room_error = document.getElementById("room-error")
 input_message.addEventListener("submit", event => {
     event.preventDefault()
 
-    const message = message_element.value
-    sendMessage(message)
+    if (room_name) {
+        sendMessage(message_element.value)
+    } else {
+        room_error.textContent = "Enter room name"
+        room_error.classList.add("error")
+        room_error.classList.add("active")
+    }
+
 
     message_element.value = ""
 })
@@ -120,5 +133,4 @@ input_message.addEventListener("submit", event => {
 let client_id = ""
 let room_name = ""
 
-// todo: error when submitting message but no room
-// todo: popup upon leaving room
+// todo: notification of person joining and leaving room (same for disconnecting)

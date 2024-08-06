@@ -12,21 +12,20 @@
         </div>
 <!--        <div id="inputs">-->
 <!--            todo: display curr room prominently-->
-            <div id="room-container">
+            <div id="form-container">
                 <form id="room">
-                    <section>
+<!--                    <section>-->
                         <label for="room-name"></label>
                         <input type="text" id="room-name" placeholder="Room" required>
-                    </section>
+<!--                    </section>-->
                     <!--                <section>-->
                     <!--                    <label for="password"></label>-->
                     <!--                    <input type="password" id="password" placeholder="Password">-->
                     <!--                </section>-->
-                    <button id="join-room"> Join </button>
+                    <button type="submit" id="join-room"> Join </button>
+                    <button type="button" id="leave-room"> Leave </button>
                 </form>
-                <div id="button-container">
-                    <button id="leave-room"> Leave </button>
-                </div>
+                <span id="room-error" class="error" aria-live="polite"></span>
             </div>
 
 
