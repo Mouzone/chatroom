@@ -52,7 +52,7 @@ function joinRoom() {
     room_error.textContent = ""
     room_error.classList.remove("error")
     room_error.classList.remove("active")
-    
+
     join_room.disabled = true
     leave_room.disabled = false
     room_name_element.disabled = true
@@ -107,9 +107,20 @@ input_room.addEventListener("submit", event => {
 
 const leave_room = document.querySelector("#leave-room")
 leave_room.addEventListener("click", event => {
-    // todo: popup upon leaving room (to confirm), if confirm then sendLeave()
+    confirmation.style.display = "block"
 
+})
+
+const confirmation = document.getElementById("leave")
+const confirm = document.querySelector("button#confirm-leave")
+confirm.addEventListener("click", event => {
+    confirmation.style.display = "none"
     sendLeave()
+})
+
+const reject = document.querySelector("button#reject-leave")
+reject.addEventListener("click", event => {
+    confirmation.style.display = "none"
 })
 
 const input_message = document.querySelector("form#message")
@@ -134,3 +145,4 @@ let client_id = ""
 let room_name = ""
 
 // todo: notification of person joining and leaving room (same for disconnecting)
+// todo: list of rooms upon joining

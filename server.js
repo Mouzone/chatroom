@@ -75,6 +75,7 @@ server.on('connection', socket => {
             }
         ))
         // todo: notification of person joining and leaving room (same for disconnecting)
+        // todo: list of rooms upon joining
     })
 })
 // maybe rewrite to send message saying recieve, then send message upon completion of task
