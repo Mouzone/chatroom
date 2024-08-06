@@ -37,13 +37,16 @@ server.on('connection', socket => {
                 }
             })
         } else if (data["action"] === "join") {
-            // todo: remove self from all other rooms
+            // remove from past room
+            if (data["client_id"] in clients_rooms) {
+                rooms_clients[data["client_id"]].remove(data["client_id"])
+            }
+            // add to new room
             clients_rooms[data["client_id"]] = data["room_name"]
             if (!(data["room_name"] in rooms_clients)) {
                 rooms_clients["room_name"] = new Set()
             }
-            rooms_clients[data["client_id"]].add(data["client_id"])
-            // todo: send success message at end
+            rooms_clients[data["room_name"]].add(data["client_id"])
         } else if (data["type"] === "disconnect") {
             delete clients_sockets[data["client_id"]]
             delete clients_usernames[data["client_id"]]
@@ -55,9 +58,15 @@ server.on('connection', socket => {
                 delete rooms_clients[room_to_clear]
             }
         }
+
+        clients_sockets[data["client_id"]].send(JSON.stringify(
+            {
+                action: "notify",
+                action_type: `${data["action"]}`,
+                status: "success",
+            }
+        ))
     })
 })
 
-// todo: Join rooms, no passwords
-// -- if it DNE then create and join
 console.log('WebSocket server is listening on ws://localhost:8080')
