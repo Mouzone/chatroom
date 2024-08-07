@@ -12,8 +12,9 @@ server.on('connection', socket => {
     const client_id = crypto.randomBytes(16).toString('hex');
     const username = `anon${counter}`
     socket.send(JSON.stringify({
-        action: "client_id",
+        action: "initialize",
         client_id: client_id,
+        rooms: Object.keys(rooms_clients),
         username: username
     }))
     counter++
@@ -42,19 +43,20 @@ server.on('connection', socket => {
                     delete rooms_clients[data["room_name"]]
                 }
             }
-            // add to new room
+            // notify all other users of user_name leaving in prev room
             clients_rooms[data["client_id"]] = data["room_name"]
             if (!(data["room_name"] in rooms_clients)) {
                 rooms_clients[data["room_name"]] = new Set()
             }
             rooms_clients[data["room_name"]].add(data["client_id"])
+            // notify all other users of user_name joining in next room
         } else if (data["action"] === "leave") {
             rooms_clients[data["room_name"]].delete(data["client_id"])
             if (rooms_clients[data["room_name"]].length === 0) {
                 delete rooms_clients[data["room_name"]]
             }
             delete clients_rooms[data["client_id"]]
-
+            // notify all other users of user_name leaving
         } else if (data["type"] === "disconnect") {
             delete clients_sockets[data["client_id"]]
             delete clients_usernames[data["client_id"]]
@@ -65,6 +67,7 @@ server.on('connection', socket => {
             if (rooms_clients[room_to_clear].length === 0) {
                 delete rooms_clients[room_to_clear]
             }
+            // notify all other users of user_name leaving
         }
 
         clients_sockets[data["client_id"]].send(JSON.stringify(

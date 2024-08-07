@@ -26,6 +26,13 @@ function sendLeave() {
     socket.send(JSON.stringify(message_info))
 }
 
+// todo: write code
+// todo: make it interactive and clickable to join the room on click (also leave once join
+function initialize(data) {
+    client_id = data["client_id"]
+    populateRooms(data["rooms"])
+}
+
 const past_messages = document.getElementById("past-messages")
 function updateMessages(data) {
     const username = data["username"]
@@ -72,8 +79,8 @@ const socket = new WebSocket('ws://localhost:8080')
 socket.onmessage = async event => {
     try {
         const data = await JSON.parse(event.data)
-        if (data["action"] === "client_id") {
-            client_id = data["client_id"]
+        if (data["action"] === "initialize") {
+            initialize(data)
         } else if (data["action"] === "receive") {
             updateMessages(data)
         } else if (data["action"] === "notify" && data["status"] === "success") {
@@ -145,4 +152,4 @@ let client_id = ""
 let room_name = ""
 
 // todo: notification of person joining and leaving room (same for disconnecting)
-// todo: list of rooms upon joining
+// todo: upon joining room show list of users
