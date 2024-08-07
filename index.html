@@ -5,49 +5,46 @@
         <title> Chat </title>
         <link rel="stylesheet" href="style.css">
     </head>
+    <!--    todo: add datetime for each message later-->
     <body>
-        <div id="leave">
-            <p> Are you sure? Chat history will not be saved. </p>
-            <div class="container">
-                <button id="confirm-leave"> Leave </button>
-                <button id="reject-leave"> Cancel </button>
-            </div>
+        <div id="rooms">
+            <p> Rooms </p>
+            <div id="rooms-list"> </div>
+            <form id="room">
+                <label for="room-name"></label>
+                <input type="text" id="room-name" placeholder="Room" required>
+                <button type="submit" id="join-room"> Join </button>
+                <button type="button" id="leave-room"> Leave </button>
+            </form>
+            <span id="room-error" class="error" aria-live="polite"></span>
         </div>
-<!--    todo: add datetime for each message later-->
-        <div id="past-messages">
 
+        <div id="users">
+            <p> Users </p>
+            <div id="users-list"></div>
         </div>
-<!--        <div id="inputs">-->
-            <div id="form-container">
-                <form id="room">
-<!--                    <section>-->
-                        <label for="room-name"></label>
-                        <input type="text" id="room-name" placeholder="Room" required>
-<!--                    </section>-->
-                    <!--                <section>-->
-                    <!--                    <label for="password"></label>-->
-                    <!--                    <input type="password" id="password" placeholder="Password">-->
-                    <!--                </section>-->
-                    <button type="submit" id="join-room"> Join </button>
-                    <button type="button" id="leave-room"> Leave </button>
-                </form>
-                <span id="room-error" class="error" aria-live="polite"></span>
+
+
+        <div id="messaging">
+            <div id="leave">
+                <p> Are you sure? Chat history will not be saved. </p>
+                <div class="container">
+                    <button id="confirm-leave"> Leave </button>
+                    <button id="reject-leave"> Cancel </button>
+                </div>
             </div>
 
+            <div id="past-messages">
+
+            </div>
 
             <form id="message">
-<!--                <section>-->
-<!--                    <label for="username"></label>-->
-<!--                    <input type="text" id="username" placeholder="Username" required>-->
-<!--                </section>-->
-<!--                <section>-->
-                    <label for="text"> </label>
-                    <input type="text" id="text" placeholder="Message..." required>
-                    <button type="submit"> Send </button>
-<!--                </section>-->
+                <label for="text"> </label>
+                <input type="text" id="text" placeholder="Message..." required>
+                <button type="submit"> Send </button>
             </form>
-<!--            <button id="reset-username"> Reset </button>-->
-            <script src="./script.js"></script>
-<!--        </div>-->
+        </div>
+
+        <script src="./script.js"></script>
     </body>
 </html>
