@@ -26,11 +26,32 @@ function sendLeave() {
     socket.send(JSON.stringify(message_info))
 }
 
-// todo: write code
-// todo: make it interactive and clickable to join the room on click (also leave once join
+// todo: add button at the end to join
 function initialize(data) {
+    const rooms_list = document.getElementById("rooms-list")
     client_id = data["client_id"]
-    populateRooms(data["rooms"])
+
+    console.log(data["rooms"])
+    Object.entries(data["rooms"]).forEach(([possible_rooms, user_count]) => {
+        const new_room = document.createElement("p")
+        new_room.classList.add("room")
+        new_room.dataset.room = possible_rooms
+        new_room.textContent = `${possible_rooms}`
+
+        new_room.addEventListener("click", event => {
+            room_name = event.currentTarget.dataset.room
+            console.log(event.currentTarget.dataset.room)
+            sendJoin()
+        })
+
+        const new_usercount = document.createElement("p")
+        new_usercount.classList.add("usercount")
+        new_room.dataset.room = possible_rooms
+        new_usercount.textContent = `${user_count}`
+
+        rooms_list.appendChild(new_room)
+        rooms_list.appendChild(new_usercount)
+    })
 }
 
 const past_messages = document.getElementById("past-messages")
@@ -60,6 +81,7 @@ function joinRoom() {
     room_error.classList.remove("error")
     room_error.classList.remove("active")
 
+    room_name_element.value = room_name
     join_room.disabled = true
     leave_room.disabled = false
     room_name_element.disabled = true
@@ -115,7 +137,6 @@ input_room.addEventListener("submit", event => {
 const leave_room = document.querySelector("#leave-room")
 leave_room.addEventListener("click", event => {
     confirmation.style.display = "block"
-
 })
 
 const confirmation = document.getElementById("leave")
@@ -151,5 +172,6 @@ input_message.addEventListener("submit", event => {
 let client_id = ""
 let room_name = ""
 
-// todo: notification of person joining and leaving room (same for disconnecting)
+// todo: update room counts and rooms as rooms deleted or user count decrease
 // todo: upon joining room show list of users
+// todo: notification of person joining and leaving room (same for disconnecting)

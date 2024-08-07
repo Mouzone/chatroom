@@ -12,7 +12,7 @@
 
 body {
     display: grid;
-    grid-template: 1fr 1fr / 1fr 3fr;
+    grid-template: 1fr 1fr / 1fr 6fr;
 
     width: 100vw;
     height: 100vh;
@@ -61,6 +61,14 @@ body {
     background-color: whitesmoke;
 }
 
+#rooms-list {
+    display: grid;
+    overflow-y: auto;
+
+    grid-template: 30px / 1fr 1fr;
+    grid-auto-flow: row;
+
+}
 
 #past-messages {
     display: flex;
@@ -74,6 +82,10 @@ body {
 
     padding: 5px;
     gap: 5px;
+}
+
+p.head {
+    font-weight: bold;
 }
 
 p {

@@ -11,10 +11,16 @@ const server = new WebSocket.Server({port: 8080})
 server.on('connection', socket => {
     const client_id = crypto.randomBytes(16).toString('hex');
     const username = `anon${counter}`
+
+    const rooms = {}
+    Object.entries(rooms_clients).forEach(([key, set]) => {
+        rooms[key] = set.size
+    })
+
     socket.send(JSON.stringify({
         action: "initialize",
         client_id: client_id,
-        rooms: Object.keys(rooms_clients),
+        rooms: rooms,
         username: username
     }))
     counter++
@@ -49,7 +55,7 @@ server.on('connection', socket => {
                     }
                 })
                 rooms_clients[clients_rooms[data["client_id"]]].delete(data["client_id"])
-                if (rooms_clients[clients_rooms[data["client_id"]]].length === 0) {
+                if (rooms_clients[clients_rooms[data["client_id"]]].size === 0) {
                     delete rooms_clients[data["room_name"]]
                 }
             }
@@ -84,7 +90,7 @@ server.on('connection', socket => {
                 }
             })
             rooms_clients[data["room_name"]].delete(data["client_id"])
-            if (rooms_clients[data["room_name"]].length === 0) {
+            if (rooms_clients[data["room_name"]].size === 0) {
                 delete rooms_clients[data["room_name"]]
             }
             delete clients_rooms[data["client_id"]]
@@ -104,7 +110,7 @@ server.on('connection', socket => {
 
             const room_to_clear = clients_rooms[data["client_id"]]
             rooms_clients[room_to_clear].delete(data["client_id"])
-            if (rooms_clients[room_to_clear].length === 0) {
+            if (rooms_clients[room_to_clear].size === 0) {
                 delete rooms_clients[room_to_clear]
             }
             // notify all other users of user_name leaving
