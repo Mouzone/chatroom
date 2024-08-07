@@ -41,11 +41,11 @@ server.on('connection', socket => {
                 // notify all other users that current user is leaving
                 rooms_clients[clients_rooms[data["client_id"]]].forEach(client_id => {
                     if (client_id !== data["client_id"]) {
-                        clients_sockets[client_id].send({
+                        clients_sockets[client_id].send(JSON.stringify({
                             action: "notify",
                             reason: "leave",
                             message: `${clients_usernames[client_id]} has left`
-                        })
+                        }))
                     }
                 })
                 rooms_clients[clients_rooms[data["client_id"]]].delete(data["client_id"])
@@ -61,26 +61,26 @@ server.on('connection', socket => {
             rooms_clients[data["room_name"]].add(data["client_id"])
             // notify all other users of user_name JOINING in next room
             rooms_clients[data["room_name"]].forEach(client_id => {
-                clients_sockets[client_id].send({
+                clients_sockets[client_id].send(JSON.stringify({
                     action: "notify",
                     reason: "join",
                     message: `${clients_usernames[client_id]} has joined`
-                })
+                }))
             })
-            clients_sockets[client_id].send({
+            clients_sockets[client_id].send(JSON.stringify({
                 action: "list",
                 room_name: data["room_name"],
                 users: [...rooms_clients[data["room_name"]]]
-            })
+            }))
         } else if (data["action"] === "leave") {
             // notify all other users of user_name leaving
             rooms_clients[data["room_name"]].forEach(client_id => {
                 if (client_id !== data["client_id"]) {
-                    clients_sockets[client_id].send({
+                    clients_sockets[client_id].send(JSON.stringify({
                         action: "notify",
                         reason: "leave",
                         message: `${clients_usernames[client_id]} has left`
-                    })
+                    }))
                 }
             })
             rooms_clients[data["room_name"]].delete(data["client_id"])
@@ -91,11 +91,11 @@ server.on('connection', socket => {
         } else if (data["type"] === "disconnect") {
             rooms_clients[clients_rooms[data["client_id"]]].forEach(client_id => {
                 if (client_id !== data["client_id"]) {
-                    clients_sockets[client_id].send({
+                    clients_sockets[client_id].send(JSON.stringify({
                         action: "notify",
                         reason: "leave",
                         message: `${clients_usernames[client_id]} has left`
-                    })
+                    }))
                 }
             })
             delete clients_sockets[data["client_id"]]
