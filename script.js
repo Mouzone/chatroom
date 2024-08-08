@@ -154,13 +154,12 @@ socket.onmessage = async event => {
     }
 }
 
-socket.onclose = async event => {
-    const close_message = {
+window.onbeforeunload = () => {
+    socket.send(JSON.stringify({
         client_id: client_id,
         action: "disconnect",
-    }
-    socket.send(JSON.stringify(close_message))
-}
+    }));
+};
 
 const room_name_element = document.getElementById("room-name")
 
@@ -197,15 +196,17 @@ refresh_rooms_button.addEventListener("click", event => {
     ))
 })
 
-const refresh_users_button = document.getElementById("refresh-rooms")
+const refresh_users_button = document.getElementById("refresh-users")
 refresh_users_button.addEventListener("click", event => {
-    socket.send(JSON.stringify(
-        {
-            action: "update-users",
-            room: room_name,
-            client_id: client_id
-        }
-    ))
+    if (room_name) {
+        socket.send(JSON.stringify(
+            {
+                action: "update-users",
+                room: room_name,
+                client_id: client_id
+            }
+        ))
+    }
 })
 
 const input_message = document.querySelector("form#message")

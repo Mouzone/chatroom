@@ -52,8 +52,10 @@ server.on('connection', socket => {
 
         } else if (data["action"] === "disconnect") {
             const room_to_send = clients_rooms[data["client_id"]]
-            const username = clients_usernames["client_id"]
-            sendLeave(room_to_send, username, data["client_id"])
+            const username = clients_usernames[data["client_id"]]
+            if (room_to_send) {
+                sendLeave(room_to_send, username, data["client_id"])
+            }
 
             delete clients_sockets[data["client_id"]]
             delete clients_usernames[data["client_id"]]
@@ -112,6 +114,12 @@ function sendLeave(room, username, client_id) {
             }))
         }
     })
+
+    clients_sockets[client_id].send(JSON.stringify(
+        {
+            action: "leave"
+        })
+    )
 
     rooms_clients[room].delete(client_id)
     if (rooms_clients[room].size === 0) {
