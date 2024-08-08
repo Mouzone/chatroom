@@ -27,11 +27,12 @@ function sendLeave() {
 }
 
 function initialize(data) {
-    const rooms_list = document.getElementById("rooms-list")
     client_id = data["client_id"]
+}
 
-    console.log(data["rooms"])
-    Object.entries(data["rooms"]).forEach(([possible_room, user_count]) => {
+function updateRooms(rooms_list) {
+    const rooms_list_element = document.getElementById("rooms-list")
+    Object.entries(rooms_list).forEach(([possible_room, user_count]) => {
 
         const new_room = document.createElement("p")
         new_room.classList.add("room")
@@ -49,16 +50,16 @@ function initialize(data) {
         join_button.dataset.room = possible_room
 
         join_button.addEventListener("click", event => {
-            room_name = event.currentTarget.dataset.room
             if (room_name) {
                 sendLeave()
             }
+            room_name = event.currentTarget.dataset.room
             sendJoin()
         })
 
-        rooms_list.appendChild(new_room)
-        rooms_list.appendChild(new_usercount)
-        rooms_list.appendChild(join_button)
+        rooms_list_element.appendChild(new_room)
+        rooms_list_element.appendChild(new_usercount)
+        rooms_list_element.appendChild(join_button)
     })
 }
 
@@ -133,8 +134,10 @@ socket.onmessage = async event => {
             } else if (data["action_type"] === "leave") {
                 leaveRoom()
             }
-        } else if (data["action"] === "list") {
+        } else if (data["action"] === "update-users") {
             updateUsers(data["users"])
+        } else if (data["action"] === "update-rooms") {
+            updateRooms(data["rooms"])
         }
     } catch (error) {
         console.error('Error handling JSON:', error)

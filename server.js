@@ -10,6 +10,8 @@ let counter = 0
 const server = new WebSocket.Server({port: 8080})
 server.on('connection', socket => {
     sendOnJoin(socket)
+    // todo: all messages taht clients send should have client_id, room_name
+    //  and username to make it all parsed before conditionals
 
     socket.on('message', message => {
         const data = JSON.parse(message)
@@ -131,8 +133,8 @@ function sendRoomList(socket) {
 
 function sendUserList(room, self_client_id) {
     // send user list
-    clients_sockets["client_id"].send(JSON.stringify({
-        action: "list",
+    clients_sockets[self_client_id].send(JSON.stringify({
+        action: "update-users",
         room_name: room,
         users: [...rooms_clients[room]].map(
             client_id => {
