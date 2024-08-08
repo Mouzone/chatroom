@@ -33,6 +33,8 @@ function initialize(data) {
 function updateRooms(rooms_list) {
     const rooms_list_element = document.getElementById("rooms-list")
     Object.entries(rooms_list).forEach(([possible_room, user_count]) => {
+        const room_container = document.createElement("div")
+        room_container.classList.add("room-info")
 
         const new_room = document.createElement("p")
         new_room.classList.add("room")
@@ -50,16 +52,19 @@ function updateRooms(rooms_list) {
         join_button.dataset.room = possible_room
 
         join_button.addEventListener("click", event => {
+            const new_room = event.currentTarget.dataset.room
             if (room_name) {
                 sendLeave()
             }
-            room_name = event.currentTarget.dataset.room
+            room_name = new_room
             sendJoin()
         })
 
-        rooms_list_element.appendChild(new_room)
-        rooms_list_element.appendChild(new_usercount)
-        rooms_list_element.appendChild(join_button)
+        room_container.appendChild(new_room)
+        room_container.appendChild(new_usercount)
+        room_container.appendChild(join_button)
+
+        rooms_list_element.appendChild(room_container)
     })
 }
 
