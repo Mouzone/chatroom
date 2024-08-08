@@ -26,7 +26,6 @@ function sendLeave() {
     socket.send(JSON.stringify(message_info))
 }
 
-// todo: add button at the end to join
 function initialize(data) {
     const rooms_list = document.getElementById("rooms-list")
     client_id = data["client_id"]
@@ -51,6 +50,9 @@ function initialize(data) {
 
         join_button.addEventListener("click", event => {
             room_name = event.currentTarget.dataset.room
+            if (room_name) {
+                sendLeave()
+            }
             sendJoin()
         })
 
@@ -100,6 +102,11 @@ function leaveRoom() {
     room_name_element.disabled = false
     room_name_element.value = ""
     room_name = ""
+    const user_list = document.getElementById("users-list")
+    user_list.innerHTML = ""
+    const heading = document.createElement("p")
+    heading.classList.add("head")
+    heading.textContent = "Users"
 
 }
 
@@ -168,6 +175,11 @@ reject.addEventListener("click", event => {
     confirmation.style.display = "none"
 })
 
+const refresh_rooms_button = document.getElementById("refresh")
+refresh_rooms_button.addEventListener("click", event => {
+    // ask for manifest of rooms again
+})
+
 const input_message = document.querySelector("form#message")
 const message_element = document.getElementById("text")
 const room_error = document.getElementById("room-error")
@@ -190,5 +202,4 @@ let client_id = ""
 let room_name = ""
 
 // todo: update room counts WITH REFRESH BUTTON to get another manifest
-// todo: upon joining room show list of users
 // todo: notification of person joining and leaving room (same for disconnecting)

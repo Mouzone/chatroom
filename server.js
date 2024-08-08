@@ -94,7 +94,7 @@ server.on('connection', socket => {
                 delete rooms_clients[data["room_name"]]
             }
             delete clients_rooms[data["client_id"]]
-        } else if (data["type"] === "disconnect") {
+        } else if (data["action"] === "disconnect") {
             rooms_clients[clients_rooms[data["client_id"]]].forEach(client_id => {
                 if (client_id !== data["client_id"]) {
                     clients_sockets[client_id].send(JSON.stringify({
