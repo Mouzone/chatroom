@@ -76,7 +76,7 @@ server.on('connection', socket => {
             clients_sockets[client_id].send(JSON.stringify({
                 action: "list",
                 room_name: data["room_name"],
-                users: [...rooms_clients[data["room_name"]]]
+                users: [...rooms_clients[data["room_name"]]].map(client_name => clients_usernames[client_name])
             }))
         } else if (data["action"] === "leave") {
             // notify all other users of user_name leaving

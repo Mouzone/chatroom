@@ -32,25 +32,31 @@ function initialize(data) {
     client_id = data["client_id"]
 
     console.log(data["rooms"])
-    Object.entries(data["rooms"]).forEach(([possible_rooms, user_count]) => {
+    Object.entries(data["rooms"]).forEach(([possible_room, user_count]) => {
+
         const new_room = document.createElement("p")
         new_room.classList.add("room")
-        new_room.dataset.room = possible_rooms
-        new_room.textContent = `${possible_rooms}`
-
-        new_room.addEventListener("click", event => {
-            room_name = event.currentTarget.dataset.room
-            console.log(event.currentTarget.dataset.room)
-            sendJoin()
-        })
+        new_room.dataset.room = possible_room
+        new_room.textContent = `${possible_room}`
 
         const new_usercount = document.createElement("p")
         new_usercount.classList.add("usercount")
-        new_room.dataset.room = possible_rooms
+        new_usercount.dataset.room = possible_room
         new_usercount.textContent = `${user_count}`
+
+        const join_button = document.createElement("button")
+        join_button.classList.add("join")
+        join_button.textContent = "Join"
+        join_button.dataset.room = possible_room
+
+        join_button.addEventListener("click", event => {
+            room_name = event.currentTarget.dataset.room
+            sendJoin()
+        })
 
         rooms_list.appendChild(new_room)
         rooms_list.appendChild(new_usercount)
+        rooms_list.appendChild(join_button)
     })
 }
 
@@ -97,6 +103,15 @@ function leaveRoom() {
 
 }
 
+function updateUsers(user_list) {
+    const users = document.getElementById("users-list")
+    user_list.forEach(username => {
+        const new_user = document.createElement("div")
+        new_user.textContent = username
+        users.appendChild(new_user)
+    })
+}
+
 const socket = new WebSocket('ws://localhost:8080')
 socket.onmessage = async event => {
     try {
@@ -111,6 +126,8 @@ socket.onmessage = async event => {
             } else if (data["action_type"] === "leave") {
                 leaveRoom()
             }
+        } else if (data["action"] === "list") {
+            updateUsers(data["users"])
         }
     } catch (error) {
         console.error('Error handling JSON:', error)
@@ -172,6 +189,6 @@ input_message.addEventListener("submit", event => {
 let client_id = ""
 let room_name = ""
 
-// todo: update room counts and rooms as rooms deleted or user count decrease
+// todo: update room counts WITH REFRESH BUTTON to get another manifest
 // todo: upon joining room show list of users
 // todo: notification of person joining and leaving room (same for disconnecting)
