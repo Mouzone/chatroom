@@ -57,9 +57,13 @@ server.on('connection', socket => {
 
             delete clients_sockets[data["client_id"]]
             delete clients_usernames[data["client_id"]]
+        } else if (data["action"] === "update-rooms") {
+            sendRoomList(socket)
+        } else if (data["action"] === "update-users") {
+            sendUserList(data["room"], data["client_id"])
         }
 
-        clients_sockets[data["client_id"]].send(JSON.stringify(
+        socket.send(JSON.stringify(
             {
                 action: "notify",
                 action_type: `${data["action"]}`,

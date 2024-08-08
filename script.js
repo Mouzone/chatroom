@@ -32,6 +32,11 @@ function initialize(data) {
 
 function updateRooms(rooms_list) {
     const rooms_list_element = document.getElementById("rooms-list")
+    const current_rooms = document.querySelectorAll("div.room-info")
+    current_rooms.forEach(element => {
+        rooms_list_element.removeChild(element)
+    })
+
     Object.entries(rooms_list).forEach(([possible_room, user_count]) => {
         const room_container = document.createElement("div")
         room_container.classList.add("room-info")
@@ -183,9 +188,24 @@ reject.addEventListener("click", event => {
     confirmation.style.display = "none"
 })
 
-const refresh_rooms_button = document.getElementById("refresh")
+const refresh_rooms_button = document.getElementById("refresh-rooms")
 refresh_rooms_button.addEventListener("click", event => {
-    // ask for manifest of rooms again
+    socket.send(JSON.stringify(
+        {
+            action: "update-rooms",
+        }
+    ))
+})
+
+const refresh_users_button = document.getElementById("refresh-rooms")
+refresh_users_button.addEventListener("click", event => {
+    socket.send(JSON.stringify(
+        {
+            action: "update-users",
+            room: room_name,
+            client_id: client_id
+        }
+    ))
 })
 
 const input_message = document.querySelector("form#message")
@@ -209,5 +229,5 @@ input_message.addEventListener("submit", event => {
 let client_id = ""
 let room_name = ""
 
-// todo: update room counts WITH REFRESH BUTTON to get another manifest
+// todo: update users list in current room and styling of top
 // todo: notification of person joining and leaving room (same for disconnecting)
