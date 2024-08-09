@@ -73,6 +73,15 @@ div.room-info {
     justify-content: space-around;
 }
 
+div.top {
+    margin-bottom: 10px;
+}
+
+#users-list > .top {
+    width: 100%;
+    display: flex;
+}
+
 #users-list {
     display: flex;
     flex-direction: column;
