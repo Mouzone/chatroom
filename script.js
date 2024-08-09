@@ -86,6 +86,21 @@ function updateMessages(data) {
     past_messages.prepend(past_message)
 }
 
+function updateUsers(user_list) {
+    // clear out all users
+    const old_users = document.querySelectorAll(".name")
+    const user_list_element = document.getElementById("users-list")
+    old_users.forEach(element => {
+        user_list_element.removeChild(element)
+    })
+    user_list.forEach(username => {
+        const new_user = document.createElement("div")
+        new_user.classList.add("name")
+        new_user.textContent = username
+        user_list_element.appendChild(new_user)
+    })
+}
+
 function joinRoom() {
     room_error.textContent = ""
     room_error.classList.remove("error")
@@ -104,21 +119,11 @@ function leaveRoom() {
     room_name_element.disabled = false
     room_name_element.value = ""
     json_template["room"] = ""
-    const user_list = document.getElementById("users-list")
-    user_list.innerHTML = ""
+    updateUsers([])
     const heading = document.createElement("p")
     heading.classList.add("head")
     heading.textContent = "Users"
 
-}
-
-function updateUsers(user_list) {
-    const users = document.getElementById("users-list")
-    user_list.forEach(username => {
-        const new_user = document.createElement("div")
-        new_user.textContent = username
-        users.appendChild(new_user)
-    })
 }
 
 const socket = new WebSocket('ws://localhost:8080')

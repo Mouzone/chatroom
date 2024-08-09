@@ -23,7 +23,6 @@ server.on('connection', socket => {
             sendMessage(room, username, data["message"])
 
         } else if (action === "join") {
-            // todo: fixed
             if (self_client_id in clients_rooms) {
                 const old_room = clients_rooms[self_client_id]
                 sendLeave(old_room, username, self_client_id)
@@ -43,7 +42,7 @@ server.on('connection', socket => {
                 }))
             })
 
-            sendUserList(room, username)
+            sendUserList(room, self_client_id)
 
         } else if (action === "leave") {
 
@@ -154,5 +153,6 @@ function sendUserList(room, self_client_id) {
     }))
 }
 
+// todo: standardize server messages
 // todo: rewrite to send message saying receive, then send message upon completion of task
 console.log('WebSocket server is listening on ws://localhost:8080')
