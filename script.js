@@ -233,4 +233,4 @@ const json_template = {
     username: "",
 }
 
-// todo: notification of person joining and leaving room (same for disconnecting)
+// todo: truncate room_names and usernames in usernames list and rooms list if too long

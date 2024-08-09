@@ -111,12 +111,6 @@ function sendLeave(room, username, self_client_id) {
         }
     })
 
-    clients_sockets[self_client_id].send(JSON.stringify(
-        {
-            action: "leave"
-        })
-    )
-
     rooms_clients[room].delete(self_client_id)
     if (rooms_clients[room].size === 0) {
         delete rooms_clients[room]
