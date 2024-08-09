@@ -165,30 +165,30 @@ input_room.addEventListener("submit", event => {
 })
 
 const leave_room = document.querySelector("#leave-room")
-leave_room.addEventListener("click", event => {
+leave_room.addEventListener("click", () => {
     confirmation.style.display = "block"
 })
 
 const confirmation = document.getElementById("leave")
 const confirm = document.querySelector("button#confirm-leave")
-confirm.addEventListener("click", event => {
+confirm.addEventListener("click", () => {
     confirmation.style.display = "none"
     sendLeave()
 })
 
 const reject = document.querySelector("button#reject-leave")
-reject.addEventListener("click", event => {
+reject.addEventListener("click", () => {
     confirmation.style.display = "none"
 })
 
 const refresh_rooms_button = document.getElementById("refresh-rooms")
-refresh_rooms_button.addEventListener("click", event => {
+refresh_rooms_button.addEventListener("click", () => {
     json_template["action"] = "update-rooms"
     socket.send(JSON.stringify(json_template))
 })
 
 const refresh_users_button = document.getElementById("refresh-users")
-refresh_users_button.addEventListener("click", event => {
+refresh_users_button.addEventListener("click", () => {
     if (json_template["room"]) {
         json_template["action"] = "update-users"
         socket.send(JSON.stringify(json_template))
