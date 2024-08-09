@@ -101,6 +101,17 @@ function updateUsers(user_list) {
     })
 }
 
+function updateUsersMessage(reason, message) {
+    const new_message = document.createElement("div")
+    past_messages.prepend(new_message)
+    new_message.textContent = message
+    if (reason === "join") {
+        new_message.classList.add("join-message")
+    } else {
+        new_message.classList.add("leave-message")
+    }
+}
+
 function joinRoom() {
     room_error.textContent = ""
     room_error.classList.remove("error")
@@ -134,11 +145,13 @@ socket.onmessage = async event => {
             initialize(data)
         } else if (data["action"] === "receive") {
             updateMessages(data)
-        } else if (data["action"] === "notify" && data["status"] === "success") {
+        } else if (data["action"] === "notify") {
             if (data["action_type"] === "join") {
                 joinRoom()
             } else if (data["action_type"] === "leave") {
                 leaveRoom()
+            } else if (["leave", "join"].includes(data["reason"])) {
+                updateUsersMessage(data["reason"], data["message"])
             }
         } else if (data["action"] === "update-users") {
             updateUsers(data["users"])
@@ -220,5 +233,4 @@ const json_template = {
     username: "",
 }
 
-// todo: update styling of top in user_list
 // todo: notification of person joining and leaving room (same for disconnecting)

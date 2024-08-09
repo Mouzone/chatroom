@@ -100,9 +100,9 @@ function sendMessage(room, username, message) {
     })
 }
 
-function sendLeave(room, username, client_id) {
-    rooms_clients[room].forEach(other_client_id => {
-        if (other_client_id !== client_id) {
+function sendLeave(room, username, self_client_id) {
+    rooms_clients[room].forEach(client_id => {
+        if (client_id !== self_client_id) {
             clients_sockets[client_id].send(JSON.stringify({
                 action: "notify",
                 reason: "leave",
@@ -111,18 +111,18 @@ function sendLeave(room, username, client_id) {
         }
     })
 
-    clients_sockets[client_id].send(JSON.stringify(
+    clients_sockets[self_client_id].send(JSON.stringify(
         {
             action: "leave"
         })
     )
 
-    rooms_clients[room].delete(client_id)
+    rooms_clients[room].delete(self_client_id)
     if (rooms_clients[room].size === 0) {
         delete rooms_clients[room]
     }
 
-    delete clients_rooms[client_id]
+    delete clients_rooms[self_client_id]
 }
 
 function sendRoomList(socket) {
