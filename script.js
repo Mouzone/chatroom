@@ -1,33 +1,24 @@
 function sendMessage(message_text) {
-    const message_info =  {
-        client_id: client_id,
-        action: "send",
-        message: message_text
-    }
-    socket.send(JSON.stringify(message_info))
+    json_template["action"] = "send"
+    json_template["message"] = message_text
+    socket.send(JSON.stringify(json_template))
+    delete json_template["message"]
 }
 
 const join_room = document.querySelector("#join-room")
 function sendJoin() {
-    const message_info = {
-        client_id: client_id,
-        action: "join",
-        room_name: room_name
-    }
-    socket.send(JSON.stringify(message_info))
+    json_template["action"] = "join"
+    socket.send(JSON.stringify(json_template))
 }
 
 function sendLeave() {
-    const message_info = {
-        client_id: client_id,
-        action: "leave",
-        room_name: room_name
-    }
-    socket.send(JSON.stringify(message_info))
+    json_template["action"] = "leave"
+    socket.send(JSON.stringify(json_template))
 }
 
 function initialize(data) {
-    client_id = data["client_id"]
+    json_template["username"] = data["username"]
+    json_template["client_id"] = data["client_id"]
 }
 
 function updateRooms(rooms_list) {
@@ -46,10 +37,10 @@ function updateRooms(rooms_list) {
         new_room.dataset.room = possible_room
         new_room.textContent = `${possible_room}`
 
-        const new_usercount = document.createElement("p")
-        new_usercount.classList.add("usercount")
-        new_usercount.dataset.room = possible_room
-        new_usercount.textContent = `${user_count}`
+        const new_user_count = document.createElement("p")
+        new_user_count.classList.add("user_count")
+        new_user_count.dataset.room = possible_room
+        new_user_count.textContent = `${user_count}`
 
         const join_button = document.createElement("button")
         join_button.classList.add("join")
@@ -58,15 +49,15 @@ function updateRooms(rooms_list) {
 
         join_button.addEventListener("click", event => {
             const new_room = event.currentTarget.dataset.room
-            if (room_name) {
+            if (json_template["room"]) {
                 sendLeave()
             }
-            room_name = new_room
+            json_template["room"] = new_room
             sendJoin()
         })
 
         room_container.appendChild(new_room)
-        room_container.appendChild(new_usercount)
+        room_container.appendChild(new_user_count)
         room_container.appendChild(join_button)
 
         rooms_list_element.appendChild(room_container)
@@ -100,7 +91,7 @@ function joinRoom() {
     room_error.classList.remove("error")
     room_error.classList.remove("active")
 
-    room_name_element.value = room_name
+    room_name_element.value = json_template["room"]
     join_room.disabled = true
     leave_room.disabled = false
     room_name_element.disabled = true
@@ -112,7 +103,7 @@ function leaveRoom() {
     past_messages.innerHTML = ""
     room_name_element.disabled = false
     room_name_element.value = ""
-    room_name = ""
+    json_template["room"] = ""
     const user_list = document.getElementById("users-list")
     user_list.innerHTML = ""
     const heading = document.createElement("p")
@@ -155,18 +146,16 @@ socket.onmessage = async event => {
 }
 
 window.onbeforeunload = () => {
-    socket.send(JSON.stringify({
-        client_id: client_id,
-        action: "disconnect",
-    }));
-};
+    json_template["action"] = "disconnect"
+    socket.send(JSON.stringify(json_template))
+}
 
 const room_name_element = document.getElementById("room-name")
 
 const input_room = document.querySelector("form#room")
 input_room.addEventListener("submit", event => {
     event.preventDefault()
-    room_name = room_name_element.value
+    json_template["room"] = room_name_element.value
     sendJoin()
 })
 
@@ -189,23 +178,15 @@ reject.addEventListener("click", event => {
 
 const refresh_rooms_button = document.getElementById("refresh-rooms")
 refresh_rooms_button.addEventListener("click", event => {
-    socket.send(JSON.stringify(
-        {
-            action: "update-rooms",
-        }
-    ))
+    json_template["action"] = "update-rooms"
+    socket.send(JSON.stringify(json_template))
 })
 
 const refresh_users_button = document.getElementById("refresh-users")
 refresh_users_button.addEventListener("click", event => {
-    if (room_name) {
-        socket.send(JSON.stringify(
-            {
-                action: "update-users",
-                room: room_name,
-                client_id: client_id
-            }
-        ))
+    if (json_template["room"]) {
+        json_template["action"] = "update-users"
+        socket.send(JSON.stringify(json_template))
     }
 })
 
@@ -215,7 +196,7 @@ const room_error = document.getElementById("room-error")
 input_message.addEventListener("submit", event => {
     event.preventDefault()
 
-    if (room_name) {
+    if (json_template["room"]) {
         sendMessage(message_element.value)
     } else {
         room_error.textContent = "Enter room name"
@@ -227,8 +208,12 @@ input_message.addEventListener("submit", event => {
     message_element.value = ""
 })
 
-let client_id = ""
-let room_name = ""
+const json_template = {
+    action: "",
+    client_id: "",
+    room: "",
+    username: "",
+}
 
-// todo: update users list in current room and styling of top
+// todo: update styling of top in user_list
 // todo: notification of person joining and leaving room (same for disconnecting)

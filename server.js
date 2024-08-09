@@ -12,63 +12,62 @@ server.on('connection', socket => {
     sendOnJoin(socket)
     // todo: all messages taht clients send should have client_id, room_name
     //  and username to make it all parsed before conditionals
-
     socket.on('message', message => {
         const data = JSON.parse(message)
+
+        const room = data["room"]
+        const client_id = data["client_id"]
+        const username = data["username"]
+        const action = data["action"]
+
         console.log(data)
-        if (data["action"] === "send") {
-            const room_to_send = clients_rooms[data["client_id"]]
-            const username = clients_usernames[data["client_id"]]
-            sendMessage(room_to_send, username, data["message"])
+        if (action === "send") {
+            sendMessage(room, username, data["message"])
 
-        } else if (data["action"] === "join") {
+        } else if (action === "join") {
+            // todo: fixed
             if (data["client_id"] in clients_rooms) {
-                // notify all other users that current user is leaving
-                const room_to_send = clients_rooms[data["client_id"]]
-                const username = clients_usernames[data["client_id"]]
-                const client_id = data["client_id"]
-                sendLeave(room_to_send, username, client_id)
+                const old_room = clients_rooms[client_id]
+                sendLeave(old_room, username, client_id)
             }
 
-            clients_rooms[data["client_id"]] = data["room_name"]
-            if (!(data["room_name"] in rooms_clients)) {
-                rooms_clients[data["room_name"]] = new Set()
+            clients_rooms[client_id] = room
+            if (!(room in rooms_clients)) {
+                rooms_clients[room] = new Set()
             }
-            rooms_clients[data["room_name"]].add(data["client_id"])
+            rooms_clients[room].add(client_id)
             // notify all other users of user_name JOINING in next room
-            rooms_clients[data["room_name"]].forEach(client_id => {
-                clients_sockets[client_id].send(JSON.stringify({
+            rooms_clients[room].forEach(neighbor_client_id => {
+                clients_sockets[neighbor_client_id].send(JSON.stringify({
                     action: "notify",
                     reason: "join",
-                    message: `${clients_usernames[client_id]} has joined`
+                    message: `${username} has joined`
                 }))
             })
 
-            sendUserList(data["room_name"], data["client_id"])
+            sendUserList(room, username)
 
-        } else if (data["action"] === "leave") {
+        } else if (action === "leave") {
 
-            sendLeave(data["room_name"], clients_usernames["client_id"], data["client_id"])
+            sendLeave(room, username, client_id)
 
-        } else if (data["action"] === "disconnect") {
-            const room_to_send = clients_rooms[data["client_id"]]
-            const username = clients_usernames[data["client_id"]]
-            if (room_to_send) {
-                sendLeave(room_to_send, username, data["client_id"])
+        } else if (action === "disconnect") {
+            if (room) {
+                sendLeave(room, username, client_id)
             }
 
-            delete clients_sockets[data["client_id"]]
-            delete clients_usernames[data["client_id"]]
-        } else if (data["action"] === "update-rooms") {
+            delete clients_sockets[client_id]
+            delete clients_usernames[client_id]
+        } else if (action === "update-rooms") {
             sendRoomList(socket)
-        } else if (data["action"] === "update-users") {
-            sendUserList(data["room"], data["client_id"])
+        } else if (action === "update-users") {
+            sendUserList(room, client_id)
         }
 
         socket.send(JSON.stringify(
             {
                 action: "notify",
-                action_type: `${data["action"]}`,
+                action_type: action,
                 status: "success",
             }
         ))
@@ -157,6 +156,5 @@ function sendUserList(room, self_client_id) {
     }))
 }
 
-
-// maybe rewrite to send message saying receive, then send message upon completion of task
+// todo: rewrite to send message saying receive, then send message upon completion of task
 console.log('WebSocket server is listening on ws://localhost:8080')
